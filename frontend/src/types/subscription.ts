@@ -1,8 +1,8 @@
 export interface Subscription {
-  id: string;
+  id: number;
   name: string;
   price: number;
   category: string;
   billingCycle: "monthly" | "yearly";
-  nextBillingDate: string;
+  nextBillDate: string;
 }
