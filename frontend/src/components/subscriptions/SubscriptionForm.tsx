@@ -18,6 +18,7 @@ export default function SubscriptionForm({ onAdd }: Props) {
     formState: { errors },
   } = useForm<Omit<Subscription, "id">>();
 
+  // NOTE: API call will be included here once backend implemented
   const onSubmit = (data: Omit<Subscription, "id">) => {
     onAdd(data);
     reset();

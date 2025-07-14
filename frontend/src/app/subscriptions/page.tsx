@@ -9,9 +9,18 @@ export default function Page() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
   const handleAdd = (data: Omit<Subscription, "id">) => {
-    // NOTE: id is just a timestamp for now, subject to change later
     const newSub = { ...data, id: Date.now() };
     setSubscriptions((prev) => [...prev, newSub]);
+  };
+
+  const handleEdit = (updated: Subscription) => {
+    setSubscriptions((prev) =>
+      prev.map((sub) => (sub.id === updated.id ? updated : sub))
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    setSubscriptions((prev) => prev.filter((sub) => sub.id !== id));
   };
 
   return (
@@ -21,8 +30,13 @@ export default function Page() {
           Add Subscription
         </h2>
         <SubscriptionForm onAdd={handleAdd} />
+
         {subscriptions.length > 0 && (
-          <SubscriptionList subscriptions={subscriptions} />
+          <SubscriptionList
+            subscriptions={subscriptions}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         )}
       </div>
     </main>
