@@ -29,7 +29,7 @@ export default function Page() {
         <h2 className="text-2xl font-semibold mb-6 text-center">
           Add Subscription
         </h2>
-        <SubscriptionForm onAdd={handleAdd} />
+        <SubscriptionForm onAdd={handleAdd} test="test string" />
 
         {subscriptions.length > 0 && (
           <SubscriptionList

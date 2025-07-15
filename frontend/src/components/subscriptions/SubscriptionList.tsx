@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Subscription } from "@/types/subscription";
-import type { Category, BillingCycle } from "@/types/subscription";
+import type {
+  Category,
+  BillingCycle,
+  Subscription,
+} from "@/types/subscription";
 
 interface Props {
   subscriptions: Subscription[];
