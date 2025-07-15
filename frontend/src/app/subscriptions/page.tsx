@@ -1,36 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Subscription } from "@/types/subscription";
+import SubscriptionForm from "@/components/subscriptions/SubscriptionForm";
+import SubscriptionList from "@/components/subscriptions/SubscriptionList";
 
-const Page = () => {
-  const [subscriptions, setSubscriptions] = useState<string[]>([]);
+export default function Page() {
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
-  useEffect(() => {
-    // Example placeholder
-    setSubscriptions(["Netflix", "Spotify", "GitHub Pro"]);
-  }, []);
+  const handleAdd = (data: Omit<Subscription, "id">) => {
+    const newSub = { ...data, id: Date.now() };
+    setSubscriptions((prev) => [...prev, newSub]);
+  };
+
+  const handleEdit = (updated: Subscription) => {
+    setSubscriptions((prev) =>
+      prev.map((sub) => (sub.id === updated.id ? updated : sub))
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    setSubscriptions((prev) => prev.filter((sub) => sub.id !== id));
+  };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
+    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="border border-gray-300 rounded-xl p-10 shadow-sm bg-white w-full max-w-xl">
         <h2 className="text-2xl font-semibold mb-6 text-center">
-          Your Subscriptions
+          Add Subscription
         </h2>
+        <SubscriptionForm onAdd={handleAdd} />
 
-        {subscriptions.length > 0 ? (
-          <ul className="list-disc list-inside space-y-2">
-            {subscriptions.map((sub) => (
-              <li key={sub} className="text-gray-800">
-                {sub}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500 text-center">No subscriptions found.</p>
+        {subscriptions.length > 0 && (
+          <SubscriptionList
+            subscriptions={subscriptions}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         )}
       </div>
     </main>
   );
-};
-
-export default Page;
+}

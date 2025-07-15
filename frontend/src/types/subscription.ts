@@ -1,7 +1,11 @@
+export type Category = "Entertainment" | "Productivity" | "Utilities" | "Other";
+export type BillingCycle = "Monthly" | "Yearly";
+
 export interface Subscription {
-  id: string;
+  id: number;
   name: string;
   price: number;
-  billingCycle: "monthly" | "yearly";
-  nextBillingDate: string;
+  category: Category;
+  billingCycle: BillingCycle;
+  nextBillDate: string;
 }
