@@ -10,7 +10,7 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-// NOTE: in a further update, reuse the SubscriptionForm.tsx component...
+// TODO: in a further update, reuse the SubscriptionForm.tsx component...
 // ... instead of the additional code used for a quick inline edit
 export default function SubscriptionList({
   subscriptions,
@@ -27,6 +27,16 @@ export default function SubscriptionList({
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Subscription>>({});
+
+  const monthlyTotal = subscriptions.reduce((total, sub) => {
+    return (
+      total + (sub.billingCycle === "Monthly" ? sub.price : sub.price / 12)
+    );
+  }, 0);
+
+  const yearlyTotal = subscriptions.reduce((total, sub) => {
+    return total + (sub.billingCycle === "Yearly" ? sub.price : sub.price * 12);
+  }, 0);
 
   const startEdit = (sub: Subscription) => {
     setEditingId(sub.id);
@@ -53,11 +63,25 @@ export default function SubscriptionList({
     setEditingId(null);
   };
 
+  // TODO: later on, create a new component "SubscriptionItem" that is responsible...
+  // for rendering a single subscription item, and managing its own edit state
   return (
     <div className="mt-10">
       <h3 className="text-lg font-semibold mb-4 text-center">
         Your Subscriptions
       </h3>
+
+      <div className="mb-6 text-center">
+        <p className="text-gray-800 font-medium">
+          Estimated Monthly Spend:{" "}
+          <span className="text-blue-600">${monthlyTotal.toFixed(2)}</span>
+        </p>
+        <p className="text-gray-800 font-medium">
+          Estimated Yearly Spend:{" "}
+          <span className="text-blue-600">${yearlyTotal.toFixed(2)}</span>
+        </p>
+      </div>
+
       <ul className="space-y-3">
         {subscriptions.map((sub) => (
           <li key={sub.id} className="border border-gray-200 rounded p-4">
