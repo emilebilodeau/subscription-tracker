@@ -10,6 +10,10 @@ export default function Page() {
 
   const handleAdd = (data: Omit<Subscription, "id">) => {
     const newSub = { ...data, id: Date.now() };
+    // functional form of state updating; ensure i'm working with the latest state
+    // we create a new array here (using prev and newSub) and update the state
+    // this means we are not modifying the old array, we're making a new one
+    // performance implication if working with a big array??
     setSubscriptions((prev) => [...prev, newSub]);
   };
 

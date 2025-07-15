@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { Subscription } from "@/types/subscription";
 
 interface Props {
-  // onAdd is a function, the interface shows what the function expects...
-  // ... and what it returns
-  // Omit is special class, where you pass a type in this case and...
-  // ... and exclude the "id" key
+  // onAdd is a function, the interface shows what the function expects (data)...
+  // ... and what it returns (nothing; void)
+  // Omit is special class, where you pass an interface (structure of an object)...
+  // ... in this case and and exclude the "id" key
   onAdd: (data: Omit<Subscription, "id">) => void;
   // regular variable example
   test: string;
