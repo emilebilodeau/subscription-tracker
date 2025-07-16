@@ -33,6 +33,11 @@ export default function SubscriptionList({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Subscription>>({});
 
+  // the first argument is the callback function ((total, sub) => {...}), which...
+  // ... runs on every item in the array (so every subscription)
+  // the second argument, 0, is the initial value for the total
+  // back to the call back function... total is the accumulator, starting at 0...
+  // ... but increasing through every iteration
   const monthlyTotal = subscriptions.reduce((total, sub) => {
     return (
       total + (sub.billingCycle === "Monthly" ? sub.price : sub.price / 12)

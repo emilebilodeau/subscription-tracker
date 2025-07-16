@@ -17,8 +17,10 @@ export default function Page() {
     setSubscriptions((prev) => [...prev, newSub]);
   };
 
-  // this replaces the "old" subscription with the new updated one, however...
-  // ... i'm not 100% sure how the code works
+  // this replaces the "old" subscription with the new updated one.
+  // go through each subscription; if its id matches the updated one, replace it...
+  // ... otherwise, leave it unchanged. at the end, an array is returned with...
+  // ... the old subscription replaced for the updated one, all the others unchanged
   const handleEdit = (updated: Subscription) => {
     setSubscriptions((prev) =>
       prev.map((sub) => (sub.id === updated.id ? updated : sub))
