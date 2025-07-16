@@ -107,6 +107,7 @@ export default function SubscriptionList({
             }`}
           >
             {editingId === sub.id ? (
+              // edit mode
               <>
                 <input
                   className="mb-2 w-full border rounded px-2 py-1"
@@ -191,6 +192,7 @@ export default function SubscriptionList({
                 </div>
               </>
             ) : (
+              // view mode
               <>
                 <div className="font-medium">{sub.name}</div>
                 <div className="text-sm text-gray-600">
