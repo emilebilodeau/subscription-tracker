@@ -63,8 +63,22 @@ export default function SubscriptionList({
     setEditingId(null);
   };
 
-  // TODO: later on, create a new component "SubscriptionItem" that is responsible...
-  // for rendering a single subscription item, and managing its own edit state
+  function isDueSoon(dateStr: string): boolean {
+    const today = new Date();
+    const dueDate = new Date(dateStr);
+
+    // Reset time for accurate comparison
+    today.setHours(0, 0, 0, 0);
+    dueDate.setHours(0, 0, 0, 0);
+
+    const diffInMs = dueDate.getTime() - today.getTime();
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return diffInDays >= 0 && diffInDays <= 7;
+  }
+
+  // TODO: later on, create 2 new components, "SubscriptionEdit" and "SubscriptionView"...
+  // ... to simplify the conditional logic in this tsx chunk
   return (
     <div className="mt-10">
       <h3 className="text-lg font-semibold mb-4 text-center">
@@ -84,7 +98,14 @@ export default function SubscriptionList({
 
       <ul className="space-y-3">
         {subscriptions.map((sub) => (
-          <li key={sub.id} className="border border-gray-200 rounded p-4">
+          <li
+            key={sub.id}
+            className={`border rounded p-4 ${
+              isDueSoon(sub.nextBillDate)
+                ? "border-yellow-400 bg-yellow-50"
+                : "border-gray-200"
+            }`}
+          >
             {editingId === sub.id ? (
               <>
                 <input
@@ -175,6 +196,11 @@ export default function SubscriptionList({
                 <div className="text-sm text-gray-600">
                   ${sub.price.toFixed(2)} • {sub.category} • {sub.billingCycle}{" "}
                   • Due {sub.nextBillDate}
+                  {isDueSoon(sub.nextBillDate) && (
+                    <span className="text-yellow-600 font-medium ml-2">
+                      ⚠️ Due Soon
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-end gap-2 mt-2">
                   <button
