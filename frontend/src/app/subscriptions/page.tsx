@@ -5,6 +5,7 @@ import { Subscription } from "@/types/subscription";
 import SubscriptionForm from "@/components/subscriptions/SubscriptionForm";
 import SubscriptionList from "@/components/subscriptions/SubscriptionList";
 
+// NOTE: this page could probably be refactored to reduce prop drilling
 export default function Page() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
