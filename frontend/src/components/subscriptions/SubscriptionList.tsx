@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type {
   Category,
   BillingCycle,
@@ -28,6 +28,8 @@ export default function SubscriptionList({
   ];
   const billingCycles: BillingCycle[] = ["Monthly", "Yearly"];
 
+  // the Partial<T> is a utility type that makes all properties of T optional...
+  // ... in our case, T is our Subscription data type
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Subscription>>({});
 
@@ -47,6 +49,8 @@ export default function SubscriptionList({
   };
 
   const saveEdit = () => {
+    // this is the validation used, which isn't as nice if we compare it to...
+    // ... react hook form seen in SubscriptionForm.tsx
     if (
       !editForm.name ||
       !editForm.price ||
@@ -65,6 +69,11 @@ export default function SubscriptionList({
   const cancelEdit = () => {
     setEditingId(null);
   };
+
+  // for testing
+  useEffect(() => {
+    console.log("rerender triggered");
+  });
 
   // TODO: later on, create a new component "SubscriptionItem" that is responsible...
   // for rendering a single subscription item, and managing its own edit state
@@ -89,6 +98,7 @@ export default function SubscriptionList({
         {subscriptions.map((sub) => (
           <li key={sub.id} className="border border-gray-200 rounded p-4">
             {editingId === sub.id ? (
+              // this is what you see in edit mode
               <>
                 <input
                   className="mb-2 w-full border rounded px-2 py-1"
@@ -173,6 +183,8 @@ export default function SubscriptionList({
                 </div>
               </>
             ) : (
+              // the below is what you see when not editing
+              // aka display only view
               <>
                 <div className="font-medium">{sub.name}</div>
                 <div className="text-sm text-gray-600">
