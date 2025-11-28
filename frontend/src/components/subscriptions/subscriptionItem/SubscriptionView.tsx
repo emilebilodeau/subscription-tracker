@@ -5,8 +5,12 @@ import { Subscription } from "@/types/subscription";
 interface Props {
   sub: Subscription;
   startEdit: (sub: Subscription) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => Promise<void> | void;
   isDueSoon: (dateStr: string) => boolean;
+}
+
+function formatDate(dateStr: string) {
+  return dateStr.split("T")[0]; // keep only YYYY-MM-DD
 }
 
 export default function SubscriptionView({
@@ -21,7 +25,7 @@ export default function SubscriptionView({
 
       <div className="text-sm text-gray-600">
         ${sub.price.toFixed(2)} • {sub.category} • {sub.billingCycle} • Due{" "}
-        {sub.nextBillDate}
+        {formatDate(sub.nextBillDate)}
         {isDueSoon(sub.nextBillDate) && (
           <span className="text-yellow-600 font-medium ml-2">⚠️ Due Soon</span>
         )}
