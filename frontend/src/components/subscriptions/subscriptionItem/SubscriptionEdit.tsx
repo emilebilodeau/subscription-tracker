@@ -8,7 +8,7 @@ interface Props {
   editForm: Partial<Subscription>;
   // setEditForm is to update to the "new subscription" using edit inputs
   setEditForm: React.Dispatch<React.SetStateAction<Partial<Subscription>>>;
-  onSave: () => void;
+  onSave: () => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -20,6 +20,12 @@ const categories: Category[] = [
 ];
 
 const billingCycles: BillingCycle[] = ["Monthly", "Yearly"];
+
+// keep only YYYY-MM-DD, even if a T timestamp leaks in
+function formatDate(dateStr: string | undefined) {
+  if (!dateStr) return "";
+  return dateStr.split("T")[0];
+}
 
 // TODO: in a further update, reuse the SubscriptionForm.tsx component...
 // ... instead of the additional code used for a quick inline edit
@@ -45,10 +51,14 @@ export default function SubscriptionEdit({
         className="mb-2 w-full border rounded px-2 py-1"
         value={editForm.price?.toString() || ""}
         onChange={(e) =>
-          setEditForm((prev) => ({
-            ...prev,
-            price: parseFloat(e.target.value),
-          }))
+          setEditForm((prev) => {
+            const value = e.target.value;
+            return {
+              ...prev,
+              // if the field is cleared, avoid NaN – let validation catch empties
+              price: value === "" ? undefined : parseFloat(value),
+            };
+          })
         }
       />
 
@@ -95,9 +105,12 @@ export default function SubscriptionEdit({
       <input
         type="date"
         className="mb-2 w-full border rounded px-2 py-1"
-        value={editForm.nextBillDate || ""}
+        value={formatDate(editForm.nextBillDate)}
         onChange={(e) =>
-          setEditForm((prev) => ({ ...prev, nextBillDate: e.target.value }))
+          setEditForm((prev) => ({
+            ...prev,
+            nextBillDate: e.target.value,
+          }))
         }
       />
 

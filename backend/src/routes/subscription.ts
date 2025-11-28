@@ -54,6 +54,8 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
+  const normalizedNextBillDate = nextBillDate.split("T")[0];
+
   try {
     const [result] = await pool.query<ResultSetHeader>(
       `
@@ -61,7 +63,7 @@ router.post("/", async (req: Request, res: Response) => {
         (name, price, category, billing_cycle, next_bill_date)
       VALUES (?, ?, ?, ?, ?)
       `,
-      [name, price, category, billingCycle, nextBillDate] // map to snake_case cols
+      [name, price, category, billingCycle, normalizedNextBillDate] // map to snake_case cols
     );
 
     const insertedId = result.insertId;
@@ -95,6 +97,9 @@ router.put("/:id", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
+  // normalize nextBillDate to YYYY-MM-DD
+  const normalizedNextBillDate = nextBillDate.split("T")[0];
+
   try {
     const [result] = await pool.query<ResultSetHeader>(
       `
@@ -102,7 +107,7 @@ router.put("/:id", async (req: Request, res: Response) => {
       SET name = ?, price = ?, category = ?, billing_cycle = ?, next_bill_date = ?
       WHERE id = ?
       `,
-      [name, price, category, billingCycle, nextBillDate, id]
+      [name, price, category, billingCycle, normalizedNextBillDate, id]
     );
 
     if (result.affectedRows === 0) {
