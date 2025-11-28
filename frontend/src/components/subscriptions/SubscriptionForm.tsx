@@ -4,24 +4,43 @@ import { useForm } from "react-hook-form";
 import { Subscription } from "@/types/subscription";
 
 interface Props {
-  onAdd: (data: Omit<Subscription, "id">) => void;
+  // explicitly async to match the handler in page.tsx
+  onAdd: (data: FormValues) => Promise<void>;
 }
 
-const categories = ["Entertainment", "Productivity", "Utilities", "Other"];
-const billingCycles = ["Monthly", "Yearly"];
+type FormValues = {
+  name: string;
+  price: number;
+  category: Subscription["category"];
+  billingCycle: Subscription["billingCycle"];
+  nextBillDate: string;
+};
+
+const categories: FormValues["category"][] = [
+  "Entertainment",
+  "Productivity",
+  "Utilities",
+  "Other",
+];
+
+const billingCycles: FormValues["billingCycle"][] = ["Monthly", "Yearly"];
 
 export default function SubscriptionForm({ onAdd }: Props) {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm<Omit<Subscription, "id">>();
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>();
 
-  // NOTE: API call will be included here once backend implemented
-  const onSubmit = (data: Omit<Subscription, "id">) => {
-    onAdd(data);
-    reset();
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await onAdd(data); // parent will call axios + map to API shape
+      reset();
+    } catch (err) {
+      console.error("Failed to add subscription:", err);
+      // optional: set a form-level error here
+    }
   };
 
   return (
@@ -46,7 +65,7 @@ export default function SubscriptionForm({ onAdd }: Props) {
           {...register("price", {
             required: "Price is required",
             min: { value: 0.01, message: "Price must be positive" },
-            valueAsNumber: true,
+            valueAsNumber: true, // ensures price is a number
           })}
           placeholder="Monthly Price (e.g., 9.99)"
           className="w-full border border-gray-300 rounded px-4 py-2"
@@ -117,9 +136,10 @@ export default function SubscriptionForm({ onAdd }: Props) {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        disabled={isSubmitting}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition disabled:opacity-60"
       >
-        Add Subscription
+        {isSubmitting ? "Adding..." : "Add Subscription"}
       </button>
     </form>
   );

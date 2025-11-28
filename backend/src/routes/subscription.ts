@@ -17,13 +17,13 @@ export interface SubscriptionRow extends RowDataPacket {
   updated_at: string; // TIMESTAMP as string
 }
 
-// Body for create / update
+// Body for create / update -> matches frontend structure
 export interface SubscriptionBody {
   name: string;
   price: number;
   category: SubscriptionRow["category"];
-  billing_cycle: SubscriptionRow["billing_cycle"];
-  next_bill_date: string; // 'YYYY-MM-DD'
+  billingCycle: SubscriptionRow["billing_cycle"];
+  nextBillDate: string; // 'YYYY-MM-DD'
 }
 
 /**
@@ -47,28 +47,21 @@ router.get("/", async (_req: Request, res: Response) => {
  * Create subscription
  */
 router.post("/", async (req: Request, res: Response) => {
-  const { name, price, category, billing_cycle, next_bill_date } =
+  const { name, price, category, billingCycle, nextBillDate } =
     req.body as SubscriptionBody;
 
-  // (Optional) minimal validation
-  if (
-    !name ||
-    price == null ||
-    !category ||
-    !billing_cycle ||
-    !next_bill_date
-  ) {
+  if (!name || price == null || !category || !billingCycle || !nextBillDate) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   try {
-    const [result] = await pool.query<ResultSetHeader>( // ⬅️ typed as ResultSetHeader
+    const [result] = await pool.query<ResultSetHeader>(
       `
       INSERT INTO subscriptions 
         (name, price, category, billing_cycle, next_bill_date)
       VALUES (?, ?, ?, ?, ?)
       `,
-      [name, price, category, billing_cycle, next_bill_date]
+      [name, price, category, billingCycle, nextBillDate] // map to snake_case cols
     );
 
     const insertedId = result.insertId;
@@ -95,27 +88,21 @@ router.put("/:id", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Invalid id" });
   }
 
-  const { name, price, category, billing_cycle, next_bill_date } =
+  const { name, price, category, billingCycle, nextBillDate } =
     req.body as SubscriptionBody;
 
-  if (
-    !name ||
-    price == null ||
-    !category ||
-    !billing_cycle ||
-    !next_bill_date
-  ) {
+  if (!name || price == null || !category || !billingCycle || !nextBillDate) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   try {
-    const [result] = await pool.query<ResultSetHeader>( // ⬅️ typed as ResultSetHeader
+    const [result] = await pool.query<ResultSetHeader>(
       `
       UPDATE subscriptions
       SET name = ?, price = ?, category = ?, billing_cycle = ?, next_bill_date = ?
       WHERE id = ?
       `,
-      [name, price, category, billing_cycle, next_bill_date, id]
+      [name, price, category, billingCycle, nextBillDate, id]
     );
 
     if (result.affectedRows === 0) {
@@ -133,7 +120,6 @@ router.put("/:id", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to update subscription" });
   }
 });
-
 /**
  * DELETE /api/subscriptions/:id
  * Delete subscription
