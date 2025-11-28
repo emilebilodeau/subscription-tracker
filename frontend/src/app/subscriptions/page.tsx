@@ -6,8 +6,10 @@ import { Subscription } from "@/types/subscription";
 import SubscriptionForm from "@/components/subscriptions/SubscriptionForm";
 import SubscriptionList from "@/components/subscriptions/SubscriptionList";
 
+// TODO: change this to environment variable
 const API_BASE = "http://localhost:8800/api";
 
+// TODO: change this logic to be handled by the backend, simplify frontend
 type ApiSubscription = {
   id: number;
   name: string;
@@ -47,7 +49,7 @@ export default function Page() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // GET all
+  // GET list all subscriptions
   useEffect(() => {
     async function load() {
       try {
@@ -65,7 +67,7 @@ export default function Page() {
     load();
   }, []);
 
-  // POST
+  // POST create a new subscription
   const handleAdd = async (data: Omit<Subscription, "id">) => {
     try {
       const res = await axios.post<ApiSubscription>(
@@ -78,7 +80,7 @@ export default function Page() {
     }
   };
 
-  // PUT
+  // PUT edit an existing subscription
   const handleEdit = async (updated: Subscription) => {
     try {
       const res = await axios.put<ApiSubscription>(
@@ -94,7 +96,7 @@ export default function Page() {
     }
   };
 
-  // DELETE
+  // DELETE an existing subscription
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`${API_BASE}/subscriptions/${id}`);

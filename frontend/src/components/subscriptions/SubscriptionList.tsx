@@ -13,6 +13,8 @@ interface Props {
 
 // NOTE: currently a lot is managed in SubscriptionList. Some improvements for...
 // ... maintainability could be implemented. keeping it like this for simplicity
+// ... ex: move computations and estimate display to a new component
+// ... ex2: edit logic shouldn't be handled by this component
 export default function SubscriptionList({
   subscriptions,
   onEdit,
